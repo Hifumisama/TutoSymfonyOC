@@ -1,0 +1,20 @@
+oc_platform_homepage:
+    path:     /
+    defaults: { _controller: OCPlatformBundle:Default:index }
+
+# Création de la route Hello World :D
+# QUelques explications de mise (on sait jamais :)) 
+#Hello_World est le nom de la route (rien de compliqué ici), la seule restriction est qu'il est unique. 
+#Path : il s'agit ni plus ni moins que notre url.
+#Defaults : correspond aux paramètres de la route : 
+#_controller: permet d'annoncer quel contrôleur on va appeler suivi du nom du bundle, l'action exécutée, et index correspond à la méthode appelée.
+# NOTE PERSONNELLE :  j'ai fortement l'impression que cela ressemble à ceci  : Bundle -> objet -> Méthode...
+
+
+hello_World:
+    path:    /hello-world
+    defaults: { _controller: OCPlatformBundle:Advert:HelloWorld }
+
+index:
+    path:    /index
+    defaults: { _controller: OCPlatformBundle:Advert:index }

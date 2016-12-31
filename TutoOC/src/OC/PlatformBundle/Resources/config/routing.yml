@@ -30,3 +30,7 @@ oc_platform_delete:
         _controller: OCPlatformBundle:Advert:delete
     requirements:
         id: \d+
+oc_platform_helloworld:
+    path:    /helloworld
+    defaults:
+        _controller: OCPlatformBundle:Advert:HelloWorld

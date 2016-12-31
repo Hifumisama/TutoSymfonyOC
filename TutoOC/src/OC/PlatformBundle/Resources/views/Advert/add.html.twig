@@ -1,0 +1,19 @@
+{% extends "OCPlatformBundle::layout.html.twig" %}
+
+{% block title %} {{parent() }} - Ajouter une annonce {% endblock %}
+
+{% block body %}
+
+
+    <h2>Ajouter une annonce</h2>
+    
+    {#
+    La ligne ci dessous permet d'INCLURE (différent d'hériter) un morceau de code, cela fonctionne quasiment comme l'include de PHP en natif en gros...
+    #}
+    {{ include ("OCPlatformBundle:Advert:form.html.twig") }}
+    
+   <p>
+       Attention :  Cette annonce sera ajoutée directement sur la page d'accueil après validation du formulaire.
+   </p>
+   
+{% endblock %}

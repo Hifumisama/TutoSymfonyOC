@@ -1,0 +1,11 @@
+<ul class="nav nav-pills nav-stacked">
+ {# cette vue (en plus de n'hériter de personne) va servir pour le menu qui va afficher les 3 dernières annonces postées par les utilisateurs. #}
+ 
+  {% for advert in listAdverts %}
+    <li>
+      <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
+        {{ advert.title }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>

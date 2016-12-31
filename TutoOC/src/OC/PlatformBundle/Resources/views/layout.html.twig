@@ -1,0 +1,23 @@
+{# Template père/layout du site. #}
+
+
+{% extends "::layout.html.twig" %}
+
+
+{% block title %}
+Annonces - {{ parent() }}
+{% endblock %}
+
+
+
+{% block body %}
+
+    <h1>Annonces</h1>
+    
+    <hr>
+    {# on crée un nouveau trou pour y placer le contenu de notre future page :D #}
+    {% block ocplatform_body %}
+    {% endblock %}
+    
+
+{% endblock %}

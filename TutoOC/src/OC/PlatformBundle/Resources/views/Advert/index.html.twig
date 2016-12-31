@@ -1,16 +1,48 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Bienvenue sur ma première page avec OpenClassrooms !</title>
-  </head>
-  <body>
-    <h1>Hello World !</h1>
+    {#
+    La ligne ci dessous est très importante, car elle permet d'indiquer que l'on hérite de tous les éléments présent dan le layout (ce qui est super pratique car on choppe la structure de base du site).
+    #}
+    {% extends "OCPlatformBundle::layout.html.twig" %}
+    
+    {#
+    Tout comme avec le block dans le template père on réutilise le nom en fonction de l'élément à modifier. A noter que la fonction parent() permet de récupérer et d'ajouter ce qu'il y a aussi entre les balises du template père (dans notre cas c'est OC Platforme). c'est pratique pour préfixer nos pages par exemple.
+    #}
+    
+    {% block title %} Accueil {{parent() }} {% endblock %}
+    
+    {% block ocplatform_body %}
+    <h2>Liste des annonces</h2>
+    
+    <ul>
+        {% for advert in listAdverts %}
+            <li>
+                <a href="{{ path('oc_platform_view', {'id': advert.id})}}">
+                    {{ advert.title }}
+                </a>
+                <p>
+                par {{ advert.author }},
+                le {{ advert.date|date('d/m/Y') }}
+                </p>
+            </li>
+        {% else %}
+          <li>Pas encore d'annonces présente sur le site...</li>
+        {% endfor %}
+    </ul>
+    {% endblock %}
 
-    <p>
-      Le Hello World est un grand classique en programmation.
-      Il signifie énormément, car cela veut dire que vous avez
-      réussi à exécuter le programme pour accomplir une tâche simple :
-      afficher ce hello world !
-    </p>
-  </body>
-</html>
+
+{#
+
+ Quelques explications ici : 
+ 
+ - Premièrement, on a créé un block ocplatform_body qui sert à remplir le trou laissé dans le layout (jusque là rien d'anormal).
+ 
+ - On a par la suite créé une boucle, qui va nous permettre de récupérer le contenu du tableau listAdverts.
+ 
+ - Ensuite on a construit un lien, avec une route, suivi de son argument (en l'occurence ici, son id).
+ 
+ - On indique ensuite le titre de l'annonce en la récupérant de objet advert, on en fait d'ailleurs de même pour l'auteur et la date (à laquelle on a rajouté un filtre afin de faciliter le format de lecture).
+ 
+ - Si il n'y a aucune annonce, on l'indique textuellement à l'utilisateur.
+ 
+ - Et enfin on ferme les blocks.
+#}

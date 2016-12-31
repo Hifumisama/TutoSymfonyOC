@@ -1,0 +1,36 @@
+{% extends "OCPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+  Modifier une annonce - {{ parent() }}
+{% endblock %}
+
+{% block ocplatform_body %}
+
+  <h2>Modifier une annonce</h2>
+
+  {{ include("OCPlatformBundle:Advert:form.html.twig") }}
+
+  <p>
+    Vous éditez une annonce déjà existante, merci de ne pas changer
+    l'esprit général de l'annonce déjà publiée.
+  </p>
+
+  <p>
+    <a href="{{ path('oc_platform_view', {'id': advert.id}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      Retour à l'annonce
+    </a>
+  </p>
+
+{% endblock %}
+
+
+{# Une petite description de ce qui se passe s'impose : 
+
+- On récupère le layout de notre site via l'héritage
+- On met à jour le titre de la page en cours
+- On va inclure le formulaire de modificataion (mais aussi de création, car c'est en réalité le même...).
+- On ajoute un bouton retour vers la page de l'annonce initiale.
+- Et on ferme les blocs.
+
+#}

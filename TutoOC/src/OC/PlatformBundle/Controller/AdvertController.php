@@ -76,7 +76,7 @@ class AdvertController extends Controller
         // ici on récupérera l'annonce correspondante à $id
         
         if($request->isMethod('POST')){
-            $request $this->redirectToRoute('oc_platform_view', array('id' => 5));
+            return $this->redirectToRoute('oc_platform_view', array('id' => 5));
             
         }
         return $this->render('OCPlatformBundle:Advert:edit.html.twig');

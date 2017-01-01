@@ -103,6 +103,14 @@ class AdvertController extends Controller
     
     public function addAction(Request $request)
     {
+        // on récupère notre service d'antispam.
+        $antispam = $this->container->get('oc_platform.antispam');
+        
+        $text = 'ceciestunspam';
+        if($antispam->isSpam($text))
+        {
+            throw new \Exception('Ce message est un spam :p !');
+        }
         // ici on va observer comment on peut gérer un formulaire : 
         
         // Si la requête est un post, alors le visiteur a soumis le formulaire.

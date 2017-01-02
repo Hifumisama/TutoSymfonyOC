@@ -96,6 +96,8 @@ class AdvertController extends Controller
         //on récupère l'annonce avec l'id prévu.
         $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
         
+        
+        
         if (null === $advert){
             throw new NotFoundHttpException("L'annonce est introuvable");
         }

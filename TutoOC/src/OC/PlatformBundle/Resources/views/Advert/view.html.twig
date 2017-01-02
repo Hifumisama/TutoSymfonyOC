@@ -5,12 +5,15 @@
 {% endblock %}
 
 {% block ocplatform_body %}
+    {% if advert.image is not null %}
+        <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+    {% endif %}
   <h2>{{ advert.title }}</h2>
   <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
 
-  <div class="well">
-    {{ advert.content }}
-  </div>
+    <div class="well">
+        {{ advert.content }}
+    </div>
     <div>
     {% for application in listApplications %}
        <h2>{{application.author}}</h2>

@@ -12,6 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 // Cet objet permet cette fois de générer nos vues en .twig.
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+// on instancie l'entité Advert pour pouvoir l'utiliser après.
+use OC\PlatformBundle\Entity\Advert;
 
 
 // On crée notre classe AdvertController dans laquelle va se trouver les méthodes que l'on va utiliser, La classe contient son nom ainsi que le suffixe Controller, ajouté pour que Symfony la reconnaisse comme tel.
@@ -24,10 +26,27 @@ class AdvertController extends Controller
     
     public function HelloWorldAction(Request $request)
     {
-        $session = $request->getSession();
-        $userId = $session->get('user_id');
-        $session->set('user_id',92);
-        return $this->redirectToRoute('oc_platform_home');
+        $advert = new Advert();
+        $advert->setTitle('Recherche développeur Symfony.');
+        $advert->setAuthor('Alex');
+        $advert->setContent('Ceci a une logique totalement évidente...');
+        $advert->setDate(new \DateTime());
+        
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($advert);
+        $em->flush();
+        
+            // Reste de la méthode qu'on avait déjà écrit
+    if ($request->isMethod('POST')) {
+      $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
+
+      // Puis on redirige vers la page de visualisation de cettte annonce
+      return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
+    }
+
+    // Si on n'est pas en POST, alors on affiche le formulaire
+    return $this->render('OCPlatformBundle:Advert:add.html.twig');
+
     }
     
     public function indexAction($page)

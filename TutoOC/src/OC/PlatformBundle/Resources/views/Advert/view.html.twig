@@ -5,14 +5,19 @@
 {% endblock %}
 
 {% block ocplatform_body %}
-
   <h2>{{ advert.title }}</h2>
   <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
 
   <div class="well">
     {{ advert.content }}
   </div>
-
+    <div>
+    {% for application in listApplications %}
+       <h2>{{application.author}}</h2>
+        <p>{{application.content}}</p>
+        <p>Posté le {{application.date|date('d/m/Y')}}</p>
+    {% endfor %}
+    </div>
   <p>
     <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
       <i class="glyphicon glyphicon-chevron-left"></i>

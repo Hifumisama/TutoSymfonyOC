@@ -14,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 // on instancie l'entité Advert pour pouvoir l'utiliser après.
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Entity\Image;
+use OC\PlatformBundle\Entity\Application;
 
 
 // On crée notre classe AdvertController dans laquelle va se trouver les méthodes que l'on va utiliser, La classe contient son nom ainsi que le suffixe Controller, ajouté pour que Symfony la reconnaisse comme tel.
@@ -57,28 +59,11 @@ class AdvertController extends Controller
             throw new NotFoundHttpException('Page'.$page.'Inexistante');
         }
         
-        // Ici sera récupérée la liste des annonces, puis sera filé au template Pour le moment ce sera des annonces en dur pour l'exemple.
+        // Ici sera récupérée la liste des annonces, puis sera filé au template
         
-        $listAdverts = array(
-            array(
-        'title'   => 'Recherche développpeur Symfony',
-        'id'      => 1,
-        'author'  => 'Alexandre',
-        'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-        'date'    => new \Datetime()),
-            array(
-        'title'   => 'Mission de webmaster',
-        'id'      => 2,
-        'author'  => 'Hugo',
-        'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-        'date'    => new \Datetime()),
-            array(
-        'title'   => 'Offre de stage webdesigner',
-        'id'      => 3,
-        'author'  => 'Mathieu',
-        'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-        'date'    => new \Datetime())
-        );
+        $em = $this->getDoctrine()->getManager();
+        // le findAll() sert à récupérer l'ensemble des entrées de l'entité.
+        $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findAll();
         
         
         return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
@@ -106,26 +91,75 @@ class AdvertController extends Controller
     {
         // ici on va récupérer l'annonce qui nous intéresse et qui portera l'id voulu. En dur pour le moment.
         
-        $advert = array(
-            'title'   => 'Recherche développpeur Symfony2',
-            'id'      => $id,
-            'author'  => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-            'date'    => new \Datetime()
-        );
+        $em = $this->getDoctrine()->getManager();
         
+        //on récupère l'annonce avec l'id prévu.
+        $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+        
+        if (null === $advert){
+            throw new NotFoundHttpException("L'annonce est introuvable");
+        }
+        
+        // ici il s'agit de la liste des annonces.
+        $listApplications = $em
+            ->getRepository('OCPlatformBundle:Application')
+            ->findBy(array('advert' => $advert));
         
         return $this->render('OCPlatformBundle:Advert:view.html.twig',array(
-            'advert' => $advert
+            'advert' => $advert,
+            'listApplications' => $listApplications
         ));
     }
     
     public function addAction(Request $request)
     {
+        // Création de l'entité Advert
+        $advert = new Advert();
+        $advert->setTitle('Recherche Sauveur du JavaScript');
+        $advert->setAuthor('Bertrand');
+        $advert->setContent("Nous recherchons un Super héros du code Javascript et NodeJS, basé sur Paris oklm tavu :D");
+        $advert->setDate(new \DateTime());
+
+        // Création de l'entité Image
+        $image = new Image();
+        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
+        $image->setAlt('Job de rêve');
+        
+        // On lie l'image à l'annonce
+        $advert->setImage($image);
+        
+        // Création d'une candidature 
+        
+        $application1 = new Application();
+        $application1->setAuthor("Francis");
+        $application1->setContent("J'ai toutes les qualité requises pour ce boulot :o");
+        
+        $application2 = new Application();
+        $application2->setAuthor("Gérard");
+        $application2->setContent("Je suis le héros de votre vie, je suis telement coul et narcissiq que mon aurtohgraffe est parfffaite !!11");
+        
+        $application1->setAdvert($advert);
+        $application2->setAdvert($advert);
+
+        // On récupère l'EntityManager
+        $em = $this->getDoctrine()->getManager();
+
+        // Étape 1 : On « persiste » l'entité
+        $em->persist($advert);
+        $em->persist($application1);
+        $em->persist($application2);
+
+        // Étape 1 bis : si on n'avait pas défini le cascade={"persist"},
+        // on devrait persister à la main l'entité $image
+        // $em->persist($image);
+
+        // Étape 2 : On déclenche l'enregistrement
+        $em->flush();
+        
         // on récupère notre service d'antispam.
         $antispam = $this->container->get('oc_platform.antispam');
         
-        $text = 'ceciestunspam';
+        $text = 'cecinest passssssssssssssssssssssssssssssssss un spam c est pour contourner la protection antispam tavu';
         if($antispam->isSpam($text))
         {
             throw new \Exception('Ce message est un spam :p !');

@@ -12,10 +12,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 // Cet objet permet cette fois de générer nos vues en .twig.
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-// on instancie l'entité Advert pour pouvoir l'utiliser après.
+// on instancie les entités pour pouvoir les manipuler par la suite.
 use OC\PlatformBundle\Entity\Advert;
 use OC\PlatformBundle\Entity\Image;
 use OC\PlatformBundle\Entity\Application;
+use OC\PlatformBundle\Entity\Category;
 
 
 // On crée notre classe AdvertController dans laquelle va se trouver les méthodes que l'on va utiliser, La classe contient son nom ainsi que le suffixe Controller, ajouté pour que Symfony la reconnaisse comme tel.
@@ -186,6 +187,32 @@ class AdvertController extends Controller
     {
         // ici on récupérera l'annonce correspondante à $id
         
+        // on récup notre entityManager
+        $em = $this->getDoctrine()->getManager();
+
+    // On récupère l'annonce $id
+    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+
+    if (null === $advert) {
+      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+    }
+
+    // La méthode findAll retourne toutes les catégories de la base de données
+    $listCategories = $em->getRepository('OCPlatformBundle:Category')->findAll();
+
+    // On boucle sur les catégories pour les lier à l'annonce
+    foreach ($listCategories as $category) {
+      $advert->addCategory($category);
+    }
+
+    // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
+    // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+
+    // Étape 2 : On déclenche l'enregistrement
+    $em->flush();
+        
+        
+        // Si la méthode est un post alors on renverras vers l'annonce éditée.
         if($request->isMethod('POST')){
             return $this->redirectToRoute('oc_platform_view', array('id' => 5));
             

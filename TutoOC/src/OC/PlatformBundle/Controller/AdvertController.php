@@ -189,27 +189,30 @@ class AdvertController extends Controller
         
         // on récup notre entityManager
         $em = $this->getDoctrine()->getManager();
+        
+        // on choppe l'annonce qui nous intéresse :
+        
+        $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+        
+        // Si il n'y a pas d'annonces...
+        if(null === $advert){
+            // ...on l'indique à l'utilisateur
+            throw new NotFoundHttpException("l'annonce demandée n'existe pas.");
+        }
+        
+        // La méthode findAll retourne toutes les catégories de la base de données, cela correspond au SELECT * FROM table que l'on utilise en SQL par exemple.
+        
+        $listCategories = $em->getRepository('OCPlatformBundle:Category')->findAll();
+        
+        foreach ($listCategories as $category){
+            
+            $advert->addCategory($category);
+        }
+        // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
+        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
 
-    // On récupère l'annonce $id
-    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
-
-    if (null === $advert) {
-      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
-    }
-
-    // La méthode findAll retourne toutes les catégories de la base de données
-    $listCategories = $em->getRepository('OCPlatformBundle:Category')->findAll();
-
-    // On boucle sur les catégories pour les lier à l'annonce
-    foreach ($listCategories as $category) {
-      $advert->addCategory($category);
-    }
-
-    // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
-    // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
-
-    // Étape 2 : On déclenche l'enregistrement
-    $em->flush();
+        // Étape 2 : On déclenche l'enregistrement
+        $em->flush();
         
         
         // Si la méthode est un post alors on renverras vers l'annonce éditée.
